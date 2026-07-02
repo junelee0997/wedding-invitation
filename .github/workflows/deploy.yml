@@ -17,6 +17,34 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      VITE_NAVER_MAP_CLIENT_ID: ${{ secrets.VITE_NAVER_MAP_CLIENT_ID }}
+      VITE_KAKAO_SDK_JS_KEY: ${{ secrets.VITE_KAKAO_SDK_JS_KEY }}
+      VITE_GROOM_NAME: ${{ secrets.VITE_GROOM_NAME }}
+      VITE_GROOM_PHONE: ${{ secrets.VITE_GROOM_PHONE }}
+      VITE_GROOM_FATHER: ${{ secrets.VITE_GROOM_FATHER }}
+      VITE_GROOM_MOTHER: ${{ secrets.VITE_GROOM_MOTHER }}
+      VITE_GROOM_BANK: ${{ secrets.VITE_GROOM_BANK }}
+      VITE_GROOM_ACCOUNT: ${{ secrets.VITE_GROOM_ACCOUNT }}
+      VITE_GROOM_HOLDER: ${{ secrets.VITE_GROOM_HOLDER }}
+      VITE_BRIDE_NAME: ${{ secrets.VITE_BRIDE_NAME }}
+      VITE_BRIDE_PHONE: ${{ secrets.VITE_BRIDE_PHONE }}
+      VITE_BRIDE_FATHER: ${{ secrets.VITE_BRIDE_FATHER }}
+      VITE_BRIDE_MOTHER: ${{ secrets.VITE_BRIDE_MOTHER }}
+      VITE_BRIDE_BANK: ${{ secrets.VITE_BRIDE_BANK }}
+      VITE_BRIDE_ACCOUNT: ${{ secrets.VITE_BRIDE_ACCOUNT }}
+      VITE_BRIDE_HOLDER: ${{ secrets.VITE_BRIDE_HOLDER }}
+      VITE_WEDDING_DATE: ${{ secrets.VITE_WEDDING_DATE }}
+      VITE_WEDDING_DATE_TEXT: ${{ secrets.VITE_WEDDING_DATE_TEXT }}
+      VITE_WEDDING_VENUE: ${{ secrets.VITE_WEDDING_VENUE }}
+      VITE_WEDDING_ADDRESS: ${{ secrets.VITE_WEDDING_ADDRESS }}
+      VITE_WEDDING_LAT: ${{ secrets.VITE_WEDDING_LAT }}
+      VITE_WEDDING_LNG: ${{ secrets.VITE_WEDDING_LNG }}
+      VITE_SHARE_TITLE: ${{ secrets.VITE_SHARE_TITLE }}
+      VITE_SHARE_DESCRIPTION: ${{ secrets.VITE_SHARE_DESCRIPTION }}
+      VITE_SHARE_IMAGE_URL: ${{ secrets.VITE_SHARE_IMAGE_URL }}
+      VITE_SHARE_LINK_URL: ${{ secrets.VITE_SHARE_LINK_URL }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,15 +53,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build
         run: npm run build
-        env:
-          VITE_NAVER_MAP_CLIENT_ID: ${{ secrets.VITE_NAVER_MAP_CLIENT_ID }}
-          VITE_KAKAO_SDK_JS_KEY: ${{ secrets.VITE_KAKAO_SDK_JS_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
