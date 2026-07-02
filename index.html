@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Wedding Invitation</title>
+  <script type="module" crossorigin src="/wedding-invitation/assets/index-CziZCBH7.js"></script>
+  <link rel="stylesheet" crossorigin href="/wedding-invitation/assets/index-DLByBpo9.css">
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-content">
+        <p class="small">Wedding Invitation</p>
+        <h1 id="coupleTitle"></h1>
+        <p id="weddingDate"></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>초대합니다</h2>
+      <p>
+        서로의 가장 좋은 친구가 되어<br />
+        이제 같은 방향을 바라보며 함께 걸어가려 합니다.
+      </p>
+      <br />
+      <p>
+        소중한 분들을 모시고<br />
+        저희의 시작을 함께 나누고 싶습니다.
+      </p>
+
+      <div class="parents" id="parentsInfo"></div>
+    </section>
+
+    <section>
+      <h2>예식 안내</h2>
+
+      <div class="card">
+        <strong id="dateText"></strong>
+        <p id="venueText"></p>
+        <p id="addressText"></p>
+      </div>
+
+      <div class="countdown">
+        <div><strong id="days">0</strong><span>일</span></div>
+        <div><strong id="hours">0</strong><span>시간</span></div>
+        <div><strong id="minutes">0</strong><span>분</span></div>
+        <div><strong id="seconds">0</strong><span>초</span></div>
+      </div>
+
+      <p id="ddayText"></p>
+
+      <div class="calendar" id="calendar"></div>
+    </section>
+
+    <section>
+      <h2>사진첩</h2>
+      <p class="sub">소중한 순간들을 담았습니다.</p>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <div id="lightbox" class="lightbox">
+      <button id="lightboxClose" class="lightbox-close">×</button>
+      <img id="lightboxImage" src="" alt="expanded wedding photo" />
+    </div>
+
+    <section>
+      <h2>오시는 길</h2>
+      <p id="mapVenue"></p>
+      <p id="mapAddress"></p>
+
+      <div id="naverMap" class="map"></div>
+
+      <a id="naverMapLink" class="btn" target="_blank">네이버 지도 열기</a>
+      <a id="naverDirectionLink" class="btn light" target="_blank">네이버 길찾기</a>
+    </section>
+
+    <section>
+      <h2>연락하기</h2>
+
+      <div class="contact-grid">
+        <a id="groomCall" class="btn">신랑에게 전화</a>
+        <a id="groomSms" class="btn light">신랑에게 문자</a>
+        <a id="brideCall" class="btn">신부에게 전화</a>
+        <a id="brideSms" class="btn light">신부에게 문자</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>마음 전하실 곳</h2>
+
+      <button class="btn light" data-account="groomAccount">
+        신랑측 계좌 보기
+      </button>
+      <div id="groomAccount" class="account"></div>
+
+      <button class="btn light" data-account="brideAccount">
+        신부측 계좌 보기
+      </button>
+      <div id="brideAccount" class="account"></div>
+    </section>
+
+    <section>
+      <button id="kakaoShareBtn" class="btn kakao">
+        카카오톡 공유하기
+      </button>
+
+      <button id="nativeShareBtn" class="btn light">
+        링크 공유하기
+      </button>
+    </section>
+
+    <footer>
+      소중한 발걸음으로 축복해주시면 감사하겠습니다.
+    </footer>
+  </main>
+
+</body>
+</html>
