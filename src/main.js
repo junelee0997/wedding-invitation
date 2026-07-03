@@ -9,7 +9,6 @@ function $(selector) {
 }
 
 function init() {
-  console.log("KAKAO SHARE CONFIG:", CONFIG.share);
   blockImageSave();
 
   document.documentElement.style.setProperty(
