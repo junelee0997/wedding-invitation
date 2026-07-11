@@ -25,7 +25,7 @@ function init() {
   $("#addressText").innerText = CONFIG.wedding.address;
   $("#mapVenue").innerText = CONFIG.wedding.venue;
   $("#mapAddress").innerText = CONFIG.wedding.address;
-
+  $("#invitationMessage").innerText = CONFIG.invitation.message;
   $("#parentsInfo").innerHTML = `
     ${CONFIG.groom.father} · ${CONFIG.groom.mother}의 아들 ${CONFIG.groom.name}<br />
     ${CONFIG.bride.father} · ${CONFIG.bride.mother}의 딸 ${CONFIG.bride.name}
@@ -42,6 +42,7 @@ function init() {
   initCountdown();
   initKakaoShare();
   initNativeShare();
+  initMusic();
   bindAccountButtons();
 }
 
@@ -211,26 +212,60 @@ function updateCountdown() {
 }
 
 function renderAccounts() {
-  $("#groomAccount").innerHTML = accountTemplate(CONFIG.groom.account);
-  $("#brideAccount").innerHTML = accountTemplate(CONFIG.bride.account);
+  $("#groomAccount").innerHTML = sideAccountTemplate(
+    "신랑",
+    CONFIG.groom.account,
+    CONFIG.groom.parentAccounts
+  );
+
+  $("#brideAccount").innerHTML = sideAccountTemplate(
+    "신부",
+    CONFIG.bride.account,
+    CONFIG.bride.parentAccounts
+  );
 }
 
-function accountTemplate(account) {
+function sideAccountTemplate(sideLabel, mainAccount, parentAccounts) {
+  const accounts = [
+    {
+      label: sideLabel,
+      ...mainAccount
+    },
+    ...parentAccounts
+      .filter(account => account.bank && account.number)
+      .map(account => ({
+        label: `${sideLabel} ${account.relation}`,
+        bank: account.bank,
+        number: account.number,
+        holder: account.holder || account.name
+      }))
+  ];
+
+  return accounts.map(accountRowTemplate).join("");
+}
+
+function accountRowTemplate(account) {
   const copyText = `${account.bank} ${account.number}`;
 
   return `
-    <div class="account-row">
-      <div>
-        <strong>${account.holder}</strong><br />
-        ${account.bank}<br />
-        ${account.number}
+    <div class="account-item">
+      <div class="account-info">
+        <span class="account-label">${account.label}</span>
+        <strong>${account.holder}</strong>
+        <span>${account.bank} ${account.number}</span>
       </div>
-      <button class="copy-btn" data-copy="${copyText}">
+
+      <button
+        class="copy-btn"
+        type="button"
+        data-copy="${copyText}"
+      >
         복사
       </button>
     </div>
   `;
 }
+
 
 function bindAccountButtons() {
   document.querySelectorAll("[data-account]").forEach(button => {
@@ -310,25 +345,67 @@ function initKakaoShare() {
     }
 
     Kakao.Share.sendDefault({
+
       objectType: "feed",
+    
       content: {
+    
         title: CONFIG.share.title,
+    
         description: CONFIG.share.description,
+    
         imageUrl: CONFIG.share.imageUrl,
+    
         link: {
+    
           mobileWebUrl: CONFIG.share.linkUrl,
+    
           webUrl: CONFIG.share.linkUrl
+    
         }
+    
       },
+    
       buttons: [
+    
         {
+    
           title: "청첩장 보기",
+    
           link: {
+    
             mobileWebUrl: CONFIG.share.linkUrl,
+    
             webUrl: CONFIG.share.linkUrl
+    
           }
+    
+        },
+    
+        {
+    
+          title: "위치 보기",
+    
+          link: {
+    
+            mobileWebUrl: `https://map.naver.com/p/search/${encodeURIComponent(
+    
+              `${CONFIG.wedding.venue} ${CONFIG.wedding.address}`
+    
+            )}`,
+    
+            webUrl: `https://map.naver.com/p/search/${encodeURIComponent(
+    
+              `${CONFIG.wedding.venue} ${CONFIG.wedding.address}`
+    
+            )}`
+    
+          }
+    
         }
+    
       ]
+    
     });
   });
 }
@@ -349,5 +426,123 @@ function initNativeShare() {
     }
   });
 }
+function initMusic() {
 
+  const audio = $("#weddingBgm");
+
+  const button = $("#musicToggleBtn");
+
+  if (!audio || !button || !CONFIG.music.src) {
+
+    return;
+
+  }
+
+  audio.src = CONFIG.music.src;
+
+  audio.volume = CONFIG.music.volume ?? 0.35;
+
+  let playing = false;
+
+  const updateButton = () => {
+
+    button.classList.toggle("playing", playing);
+
+    button.innerText = playing ? "Ⅱ" : "♪";
+
+    button.setAttribute(
+
+      "aria-label",
+
+      playing ? "배경음악 일시정지" : "배경음악 재생"
+
+    );
+
+  };
+
+  const playMusic = async () => {
+
+    try {
+
+      await audio.play();
+
+      playing = true;
+
+      updateButton();
+
+    } catch {
+
+      playing = false;
+
+      updateButton();
+
+    }
+
+  };
+
+  const pauseMusic = () => {
+
+    audio.pause();
+
+    playing = false;
+
+    updateButton();
+
+  };
+
+  button.addEventListener("click", async () => {
+
+    if (playing) {
+
+      pauseMusic();
+
+    } else {
+
+      await playMusic();
+
+    }
+
+  });
+
+  audio.addEventListener("play", () => {
+
+    playing = true;
+
+    updateButton();
+
+  });
+
+  audio.addEventListener("pause", () => {
+
+    playing = false;
+
+    updateButton();
+
+  });
+
+  // 브라우저 정책상 자동재생이 허용되는 경우에만 바로 재생됨
+
+  playMusic();
+
+  // 자동재생이 차단된 경우 사용자의 첫 터치/클릭 이후 한 번 재시도
+
+  const startAfterInteraction = async () => {
+
+    if (!playing) {
+
+      await playMusic();
+
+    }
+
+    document.removeEventListener("click", startAfterInteraction);
+
+    document.removeEventListener("touchstart", startAfterInteraction);
+
+  };
+
+  document.addEventListener("click", startAfterInteraction, { once: true });
+
+  document.addEventListener("touchstart", startAfterInteraction, { once: true });
+
+}
 init();

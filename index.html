@@ -19,16 +19,9 @@
 
     <section>
       <h2>초대합니다</h2>
-      <p>
-        서로의 가장 좋은 친구가 되어<br />
-        이제 같은 방향을 바라보며 함께 걸어가려 합니다.
-      </p>
-      <br />
-      <p>
-        소중한 분들을 모시고<br />
-        저희의 시작을 함께 나누고 싶습니다.
-      </p>
-
+    
+      <p id="invitationMessage" class="invitation-message"></p>
+    
       <div class="parents" id="parentsInfo"></div>
     </section>
 
@@ -87,17 +80,25 @@
     </section>
 
     <section>
+
       <h2>마음 전하실 곳</h2>
-
+    
       <button class="btn light" data-account="groomAccount">
+    
         신랑측 계좌 보기
+    
       </button>
-      <div id="groomAccount" class="account"></div>
-
+    
+      <div id="groomAccount" class="account account-list"></div>
+    
       <button class="btn light" data-account="brideAccount">
+    
         신부측 계좌 보기
+    
       </button>
-      <div id="brideAccount" class="account"></div>
+    
+      <div id="brideAccount" class="account account-list"></div>
+    
     </section>
 
     <section>
@@ -114,7 +115,7 @@
       소중한 발걸음으로 축복해주시면 감사하겠습니다.
     </footer>
   </main>
-
+  
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
