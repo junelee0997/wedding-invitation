@@ -68,6 +68,7 @@ jobs:
 
       VITE_BRIDE_MOTHER_HOLDER: ${{ secrets.VITE_BRIDE_MOTHER_HOLDER }}
       VITE_INVITATION_MESSAGE: ${{ secrets.VITE_INVITATION_MESSAGE }}
+      VITE_WEDDING_SEARCH_NAME: ${{ secrets.VITE_WEDDING_SEARCH_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

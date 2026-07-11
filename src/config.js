@@ -70,21 +70,29 @@ export const CONFIG = {
   },
 
   wedding: {
+
     date: import.meta.env.VITE_WEDDING_DATE || "",
+  
     dateText: import.meta.env.VITE_WEDDING_DATE_TEXT || "",
-
-    // 청첩장 화면에 표시할 이름
+  
     venue: import.meta.env.VITE_WEDDING_VENUE || "",
-
-    // 네이버 지도 검색에 사용할 정확한 장소명
+  
+    // 네이버 지도 검색 버튼 전용
+  
     searchName:
+  
       import.meta.env.VITE_WEDDING_SEARCH_NAME ||
+  
       import.meta.env.VITE_WEDDING_VENUE ||
+  
       "",
-
+  
     address: import.meta.env.VITE_WEDDING_ADDRESS || "",
+  
     lat: Number(import.meta.env.VITE_WEDDING_LAT),
+  
     lng: Number(import.meta.env.VITE_WEDDING_LNG)
+  
   },
 
   invitation: {
