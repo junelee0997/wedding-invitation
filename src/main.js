@@ -307,91 +307,145 @@ function renderContacts() {
 -------------------- */
 
 function renderNaverMap() {
+
   const mapElement = $("#naverMap");
+
   const mapLink = $("#naverMapLink");
+
   const directionLink = $("#naverDirectionLink");
 
-  const searchQuery = encodeURIComponent(
-    `${CONFIG.wedding.searchName} ${CONFIG.wedding.address}`
-  );
+  // 네이버 지도 검색에는 이 문구만 사용
 
-  const destinationName = encodeURIComponent(
-    CONFIG.wedding.searchName
-  );
+  const searchName = "까사그랑데 센트로";
+
+  const searchQuery = encodeURIComponent(searchName);
+
+  const destinationName = encodeURIComponent(searchName);
 
   const { lat, lng } = CONFIG.wedding;
 
   if (mapLink) {
+
     mapLink.href =
+
       `https://map.naver.com/p/search/${searchQuery}`;
+
   }
 
   if (directionLink) {
+
     directionLink.href =
+
       `https://map.naver.com/p/directions/-/` +
+
       `${lng},${lat},${destinationName},PLACE_POI/-/transit`;
+
   }
 
   if (!NAVER_MAP_CLIENT_ID || !mapElement) {
-    console.warn(
-      "네이버 지도 Client ID 또는 지도 요소가 없습니다."
-    );
+
+    console.warn("네이버 지도 Client ID 또는 지도 요소가 없습니다.");
+
     return;
+
   }
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+
     console.warn("웨딩홀 위도·경도 값이 올바르지 않습니다.");
+
     return;
+
   }
 
   const createMap = () => {
+
     const position = new window.naver.maps.LatLng(lat, lng);
 
     const map = new window.naver.maps.Map("naverMap", {
+
       center: position,
-      zoom: 16,
+
+      zoom: 17,
+
       zoomControl: true,
+
       zoomControlOptions: {
+
         position: window.naver.maps.Position.TOP_RIGHT
+
       }
+
     });
 
     const marker = new window.naver.maps.Marker({
+
       position,
-      map
+
+      map,
+
+      title: searchName
+
     });
 
     window.naver.maps.Event.addListener(marker, "click", () => {
-      window.open(mapLink.href, "_blank", "noopener,noreferrer");
+
+      window.open(
+
+        `https://map.naver.com/p/search/${searchQuery}`,
+
+        "_blank",
+
+        "noopener,noreferrer"
+
+      );
+
     });
+
   };
 
   if (window.naver?.maps) {
+
     createMap();
+
     return;
+
   }
 
   const script = document.createElement("script");
 
   script.src =
+
     "https://oapi.map.naver.com/openapi/v3/maps.js" +
+
     `?ncpKeyId=${encodeURIComponent(NAVER_MAP_CLIENT_ID)}`;
 
   script.async = true;
+
   script.defer = true;
+
   script.onload = createMap;
 
   script.onerror = () => {
+
     console.error("네이버 지도 SDK를 불러오지 못했습니다.");
+
     mapElement.innerHTML = `
+
       <p class="map-error">
+
         지도를 불러오지 못했습니다.<br />
+
         아래의 네이버 지도 버튼을 이용해 주세요.
+
       </p>
+
     `;
+
   };
 
   document.head.appendChild(script);
+
 }
 
 /* --------------------
