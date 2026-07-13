@@ -104,8 +104,51 @@ function init() {
   initCopyLink();
   initMusic();
   initIntro();
+  initScrollReveal();
 }
+function initScrollReveal() {
+  const revealElements = document.querySelectorAll(
+    ".section, footer"
+  );
 
+  if (!("IntersectionObserver" in window)) {
+    revealElements.forEach(element => {
+      element.classList.add("reveal-visible");
+    });
+
+    return;
+  }
+
+  revealElements.forEach((element, index) => {
+    element.classList.add("reveal-item");
+
+    element.style.setProperty(
+      "--reveal-delay",
+      `${Math.min(index * 70, 280)}ms`
+    );
+  });
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        entry.target.classList.add("reveal-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.12,
+      rootMargin: "0px 0px -8% 0px"
+    }
+  );
+
+  revealElements.forEach(element => {
+    observer.observe(element);
+  });
+}
 function blockImageSave() {
   document.addEventListener("contextmenu", event => {
     if (event.target instanceof HTMLImageElement) event.preventDefault();
@@ -478,9 +521,11 @@ function renderNaverMap() {
   }
 
   if (directionLink) {
+
     directionLink.href =
-      `https://map.naver.com/p/directions/-/` +
-      `${lng},${lat},${encodedSearchName},PLACE_POI/-/transit`;
+  
+      "https://map.naver.com/p/directions/-/3zlvyM,2AKTV8,%EA%B9%8C%EC%82%AC%EA%B7%B8%EB%9E%91%EB%8D%B0%20%EC%84%BC%ED%8A%B8%EB%A1%9C,1396499968,PLACE_POI/-/transit?c=15.00,0,0,0,dh";
+  
   }
 
   if (
