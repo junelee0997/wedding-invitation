@@ -638,21 +638,27 @@ function initKakaoShare() {
     try {
       const Kakao = await ensureKakaoSdk();
 
-      const descriptionWithUrl = [
-        CONFIG.share.description,
-        CONFIG.share.linkUrl
-      ].join("\n");
-
-      const kakaoPlaceUrl =
-        "https://place.map.kakao.com/67986660";
-
       Kakao.Share.sendDefault({
-        objectType: "feed",
+        objectType: "location",
+
+        address:
+          "서울 광진구 능동로 87 건대입구역자이엘라 6층",
+
+        addressTitle:
+          "까사그랑데 센트로",
 
         content: {
           title: CONFIG.share.title,
-          description: descriptionWithUrl,
+
+          description: [
+            CONFIG.wedding.dateText,
+            CONFIG.wedding.venue
+          ].join("\n"),
+
           imageUrl: CONFIG.share.imageUrl,
+
+          imageWidth: 800,
+          imageHeight: 1000,
 
           link: {
             mobileWebUrl: CONFIG.share.linkUrl,
@@ -667,19 +673,12 @@ function initKakaoShare() {
               mobileWebUrl: CONFIG.share.linkUrl,
               webUrl: CONFIG.share.linkUrl
             }
-          },
-          {
-            title: "위치 보기",
-            link: {
-              mobileWebUrl: kakaoPlaceUrl,
-              webUrl: kakaoPlaceUrl
-            }
           }
         ]
       });
     } catch (error) {
-      console.error("카카오 공유 실패:", error);
-      alert("카카오 공유 기능을 실행하지 못했습니다.");
+      console.error("카카오 위치 공유 실패:", error);
+      alert("카카오톡 공유 기능을 실행하지 못했습니다.");
     }
   });
 }
