@@ -39,6 +39,16 @@ async function initIntro() {
     return;
   }
 
+  try {
+    await document.fonts.load(
+      '32px "Nanum Pen Script"'
+    );
+
+    await document.fonts.ready;
+  } catch (error) {
+    console.warn("인트로 웹폰트 로드 실패:", error);
+  }
+
   eyebrow.textContent = CONFIG.intro.eyebrow;
   enterButton.textContent = CONFIG.intro.buttonText;
 
@@ -49,6 +59,7 @@ async function initIntro() {
   }
 
   enterButton.hidden = false;
+
   requestAnimationFrame(() => {
     enterButton.classList.add("show");
   });
