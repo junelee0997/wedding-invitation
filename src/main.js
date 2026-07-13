@@ -785,5 +785,31 @@ function initMusic() {
     musicButton.hidden = true;
   });
 }
+function initCopyLink() {
+  const button = $("#copyLinkBtn");
+
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(
+        CONFIG.share.linkUrl
+      );
+
+      const originalText = button.textContent;
+
+      button.textContent = "링크가 복사되었습니다";
+
+      window.setTimeout(() => {
+        button.textContent = originalText;
+      }, 1600);
+    } catch (error) {
+      console.error("링크 복사 실패:", error);
+      alert("링크를 복사하지 못했습니다.");
+    }
+  });
+}
 
 init();
