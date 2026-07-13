@@ -100,11 +100,81 @@ function init() {
   renderAccounts();
   bindAccountButtons();
   renderNaverMap();
-  initKakaoShare();
-  initCopyLink();
+  //initKakaoShare();
+  //initCopyLink();
+  initUrlShare();
   initMusic();
   initIntro();
   initScrollReveal();
+}
+function initUrlShare() {
+  const shareButton = $("#kakaoShareBtn");
+  const copyButton = $("#copyLinkBtn");
+
+  const copyUrl = async button => {
+    try {
+      // 제목이나 문구를 섞지 않고 URL만 복사해야
+      // 카카오톡에서 링크 카드로 인식되기 쉽다.
+      await navigator.clipboard.writeText(
+        CONFIG.share.linkUrl
+      );
+
+      if (button) {
+        const originalText = button.textContent;
+
+        button.textContent = "링크가 복사되었습니다";
+
+        window.setTimeout(() => {
+          button.textContent = originalText;
+        }, 1600);
+      }
+    } catch {
+      alert("청첩장 링크를 복사하지 못했습니다.");
+    }
+  };
+
+  if (shareButton) {
+    shareButton.textContent = "카카오톡으로 공유하기";
+
+    shareButton.addEventListener("click", async () => {
+      /*
+       * 모바일에서는 운영체제 공유창을 열어
+       * 카카오톡을 직접 선택할 수 있게 한다.
+       *
+       * URL이 실제 메시지 데이터에 포함되므로
+       * 카카오톡이 Open Graph 카드로 변환할 수 있다.
+       */
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: CONFIG.share.title,
+            text: CONFIG.share.description,
+            url: CONFIG.share.linkUrl
+          });
+
+          return;
+        } catch (error) {
+          if (error?.name === "AbortError") {
+            return;
+          }
+        }
+      }
+
+      await copyUrl(shareButton);
+
+      alert(
+        "청첩장 링크가 복사되었습니다.\n카카오톡 채팅방에 붙여넣어 주세요."
+      );
+    });
+  }
+
+  if (copyButton) {
+    copyButton.textContent = "링크 복사하기";
+
+    copyButton.addEventListener("click", async () => {
+      await copyUrl(copyButton);
+    });
+  }
 }
 function initScrollReveal() {
   const revealElements = document.querySelectorAll(
