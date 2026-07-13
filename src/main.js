@@ -643,8 +643,8 @@ function initKakaoShare() {
         CONFIG.share.linkUrl
       ].join("\n");
 
-      const locationUrl = new URL(CONFIG.share.linkUrl);
-      locationUrl.hash = "location";
+      const kakaoPlaceUrl =
+        "https://place.map.kakao.com/67986660";
 
       Kakao.Share.sendDefault({
         objectType: "feed",
@@ -671,8 +671,8 @@ function initKakaoShare() {
           {
             title: "위치 보기",
             link: {
-              mobileWebUrl: locationUrl.toString(),
-              webUrl: locationUrl.toString()
+              mobileWebUrl: kakaoPlaceUrl,
+              webUrl: kakaoPlaceUrl
             }
           }
         ]
