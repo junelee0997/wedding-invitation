@@ -105,6 +105,7 @@ function init() {
   blockImageSave();
   renderGallerySlider();
   renderCalendar();
+  initCalendarDownload();
   initCountdown();
   renderTransportation();
   renderContacts();
@@ -119,6 +120,107 @@ function init() {
   initIntro();
   initScrollReveal();
 }
+
+function formatIcsDate(date) {
+  return date
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}Z$/, "Z");
+}
+
+function escapeIcsText(value = "") {
+  return String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+function initCalendarDownload() {
+  const button = $("#calendarAddBtn");
+
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", () => {
+    const start = new Date(CONFIG.wedding.date);
+
+    if (Number.isNaN(start.getTime())) {
+      alert("예식 날짜 정보가 올바르지 않습니다.");
+      return;
+    }
+
+    // 예식 종료 시간: 시작 2시간 후
+    const end = new Date(
+      start.getTime() + 2 * 60 * 60 * 1000
+    );
+
+    const title =
+      `${CONFIG.groom.name} ♥ ${CONFIG.bride.name} 결혼식`;
+
+    const location = [
+      CONFIG.wedding.venue,
+      CONFIG.wedding.address
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    const description = [
+      CONFIG.share.description,
+      CONFIG.share.linkUrl
+    ]
+      .filter(Boolean)
+      .join("\\n");
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Yunsung Jion Wedding//KO",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `UID:wedding-${start.getTime()}@yunsung-jion.vercel.app`,
+      `DTSTAMP:${formatIcsDate(new Date())}`,
+      `DTSTART:${formatIcsDate(start)}`,
+      `DTEND:${formatIcsDate(end)}`,
+      `SUMMARY:${escapeIcsText(title)}`,
+      `LOCATION:${escapeIcsText(location)}`,
+      `DESCRIPTION:${escapeIcsText(description)}`,
+      `URL:${CONFIG.share.linkUrl}`,
+      "BEGIN:VALARM",
+      "TRIGGER:-P1D",
+      "ACTION:DISPLAY",
+      "DESCRIPTION:결혼식 하루 전입니다.",
+      "END:VALARM",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+
+    const blob = new Blob(
+      [icsContent],
+      {
+        type: "text/calendar;charset=utf-8"
+      }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download =
+      `${CONFIG.groom.name}-${CONFIG.bride.name}-결혼식.ics`;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+  });
+}
+
 function initScrollReveal() {
   const revealElements = document.querySelectorAll(
     ".section, footer"

@@ -799,6 +799,11 @@ footer {
     filter: none;
   }
 }
+.btn.calendar-btn {
+  background: #6f8575;
+  color: white;
+}
+
 .intro-handwriting-line {
 
   min-height: 1.75em;
