@@ -1,18 +1,14 @@
 {
-
+  "name": "yunsung-jion-wedding",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-      "dev": "vite",
-      "build": "vite build",
-      "preview": "vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-
   "dependencies": {
-
-    "@vitejs/plugin-legacy": "latest",
-
-    "vite": "latest"
-
+    "vite": "^8.0.16"
   }
-
 }
-
