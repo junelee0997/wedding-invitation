@@ -102,7 +102,6 @@ function init() {
   renderNaverMap();
   initKakaoShare();
   initCopyLink();
-  initNativeShare();
   initMusic();
   initIntro();
 }
@@ -631,7 +630,9 @@ function initKakaoShare() {
 function initCopyLink() {
   const button = $("#copyLinkBtn");
 
-  if (!button) return;
+  if (!button) {
+    return;
+  }
 
   button.addEventListener("click", async () => {
     try {
@@ -639,9 +640,12 @@ function initCopyLink() {
         CONFIG.share.linkUrl
       );
 
-      alert(
-        "청첩장 링크가 복사되었습니다. 카카오톡에 붙여넣으면 카드가 생성됩니다."
-      );
+      const originalText = button.textContent;
+      button.textContent = "링크가 복사되었습니다";
+
+      window.setTimeout(() => {
+        button.textContent = originalText;
+      }, 1600);
     } catch {
       alert("링크를 복사하지 못했습니다.");
     }

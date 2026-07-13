@@ -120,7 +120,7 @@ export const CONFIG = {
 
   images: {
     main: `${BASE_URL}images/main.jpg`,
-    gallery: galleryFiles.map(name => `${BASE_URL}images/${name}`)
+    gallery: galleryFiles.map(name => `${BASE_URL}images/${name}`).reverse()
   },
 
   music: {
