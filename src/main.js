@@ -525,12 +525,13 @@ function renderNaverMap() {
   const encodedSearchName = encodeURIComponent(searchName);
 
   // 실제 마커 위치
-  const markerLat = 37.54081;
-  const markerLng = 127.07115;
+  const markerLat = 37.5391252;
+
+  const markerLng = 127.0696784;
 
   // 지도 화면 중심 보정값
   // 마커는 그대로 두고 화면만 약간 위쪽으로 이동
-  const centerLat = markerLat + 0.00012;
+  const centerLat = markerLat;
   const centerLng = markerLng;
 
   if (mapLink) {
