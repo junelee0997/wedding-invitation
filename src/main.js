@@ -111,6 +111,8 @@ function init() {
   renderAccounts();
   bindAccountButtons();
   renderNaverMap();
+  initKakaoNavi();
+  initTmapNavi();
   initKakaoShare();
   initCopyLink();
   initMusic();
@@ -628,76 +630,57 @@ function renderNaverMap() {
 function initKakaoShare() {
   const button = $("#kakaoShareBtn");
 
-  if (!button || !KAKAO_SDK_JS_KEY) return;
-
-  const initialize = () => {
-    if (
-      window.Kakao &&
-      !window.Kakao.isInitialized()
-    ) {
-      window.Kakao.init(KAKAO_SDK_JS_KEY);
-    }
-  };
-
-  if (!window.Kakao) {
-    const script =
-      document.createElement("script");
-
-    script.src =
-      "https://developers.kakao.com/sdk/js/kakao.js";
-
-    script.async = true;
-    script.onload = initialize;
-    document.head.appendChild(script);
-  } else {
-    initialize();
+  if (!button) {
+    return;
   }
 
-  button.addEventListener("click", () => {
-    if (!window.Kakao?.isInitialized()) {
-      alert("카카오 공유 기능을 준비하고 있습니다.");
-      return;
-    }
-  
-    const descriptionWithUrl = [
-      CONFIG.share.description,
-      CONFIG.share.linkUrl
-    ].join("\n");
-  
-    const locationUrl = new URL(CONFIG.share.linkUrl);
-    locationUrl.hash = "location";
-  
-    window.Kakao.Share.sendDefault({
-      objectType: "feed",
-  
-      content: {
-        title: CONFIG.share.title,
-        description: descriptionWithUrl,
-        imageUrl: CONFIG.share.imageUrl,
-  
-        link: {
-          mobileWebUrl: CONFIG.share.linkUrl,
-          webUrl: CONFIG.share.linkUrl
-        }
-      },
-  
-      buttons: [
-        {
-          title: "청첩장 보기",
+  button.addEventListener("click", async () => {
+    try {
+      const Kakao = await ensureKakaoSdk();
+
+      const descriptionWithUrl = [
+        CONFIG.share.description,
+        CONFIG.share.linkUrl
+      ].join("\n");
+
+      const locationUrl = new URL(CONFIG.share.linkUrl);
+      locationUrl.hash = "location";
+
+      Kakao.Share.sendDefault({
+        objectType: "feed",
+
+        content: {
+          title: CONFIG.share.title,
+          description: descriptionWithUrl,
+          imageUrl: CONFIG.share.imageUrl,
+
           link: {
             mobileWebUrl: CONFIG.share.linkUrl,
             webUrl: CONFIG.share.linkUrl
           }
         },
-        {
-          title: "위치 보기",
-          link: {
-            mobileWebUrl: locationUrl.toString(),
-            webUrl: locationUrl.toString()
+
+        buttons: [
+          {
+            title: "청첩장 보기",
+            link: {
+              mobileWebUrl: CONFIG.share.linkUrl,
+              webUrl: CONFIG.share.linkUrl
+            }
+          },
+          {
+            title: "위치 보기",
+            link: {
+              mobileWebUrl: locationUrl.toString(),
+              webUrl: locationUrl.toString()
+            }
           }
-        }
-      ]
-    });
+        ]
+      });
+    } catch (error) {
+      console.error("카카오 공유 실패:", error);
+      alert("카카오 공유 기능을 실행하지 못했습니다.");
+    }
   });
 }
 
@@ -835,6 +818,127 @@ function initCopyLink() {
       console.error("링크 복사 실패:", error);
       alert("링크를 복사하지 못했습니다.");
     }
+  });
+}
+let kakaoSdkPromise = null;
+
+function ensureKakaoSdk() {
+  if (!KAKAO_SDK_JS_KEY) {
+    return Promise.reject(
+      new Error("카카오 JavaScript 키가 설정되지 않았습니다.")
+    );
+  }
+
+  if (window.Kakao) {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_SDK_JS_KEY);
+    }
+
+    return Promise.resolve(window.Kakao);
+  }
+
+  if (kakaoSdkPromise) {
+    return kakaoSdkPromise;
+  }
+
+  kakaoSdkPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+
+    script.src =
+      "https://developers.kakao.com/sdk/js/kakao.js";
+
+    script.async = true;
+
+    script.onload = () => {
+      if (!window.Kakao) {
+        reject(new Error("카카오 SDK 객체가 없습니다."));
+        return;
+      }
+
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(KAKAO_SDK_JS_KEY);
+      }
+
+      resolve(window.Kakao);
+    };
+
+    script.onerror = () => {
+      reject(new Error("카카오 SDK를 불러오지 못했습니다."));
+    };
+
+    document.head.appendChild(script);
+  });
+
+  return kakaoSdkPromise;
+}
+
+function initKakaoNavi() {
+  const button = $("#kakaoNaviBtn");
+
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", async () => {
+    try {
+      const Kakao = await ensureKakaoSdk();
+
+      Kakao.Navi.start({
+        name: "까사그랑데 센트로",
+        x: 127.0696784,
+        y: 37.5391252,
+        coordType: "wgs84"
+      });
+    } catch (error) {
+      console.error("카카오내비 실행 실패:", error);
+      alert("카카오내비를 실행하지 못했습니다.");
+    }
+  });
+}
+
+function initTmapNavi() {
+  const button = $("#tmapNaviBtn");
+
+  if (!button) {
+    return;
+  }
+
+  const destinationName = "까사그랑데 센트로";
+  const lat = 37.5391252;
+  const lng = 127.0696784;
+
+  button.addEventListener("click", () => {
+    const appUrl =
+      "tmap://route" +
+      `?goalname=${encodeURIComponent(destinationName)}` +
+      `&goalx=${lng}` +
+      `&goaly=${lat}`;
+
+    const fallbackUrl =
+      "https://www.tmap.co.kr/search/search.do" +
+      `?searchKeyword=${encodeURIComponent(destinationName)}`;
+
+    let pageHidden = false;
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        pageHidden = true;
+      }
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility,
+      { once: true }
+    );
+
+    window.location.href = appUrl;
+
+    window.setTimeout(() => {
+      if (!pageHidden) {
+        window.location.href = fallbackUrl;
+      }
+    }, 1600);
   });
 }
 
