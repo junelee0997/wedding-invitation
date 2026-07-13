@@ -897,49 +897,109 @@ function initKakaoNavi() {
 }
 
 function initTmapNavi() {
+
   const button = $("#tmapNaviBtn");
 
   if (!button) {
+
     return;
+
   }
 
   const destinationName = "까사그랑데 센트로";
+
   const lat = 37.5391252;
+
   const lng = 127.0696784;
 
   button.addEventListener("click", () => {
+
+    const userAgent = navigator.userAgent;
+
+    const isAndroid = /Android/i.test(userAgent);
+
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+
+    if (!isAndroid && !isIOS) {
+
+      alert("TMAP 길찾기는 모바일에서 이용해 주세요.");
+
+      return;
+
+    }
+
     const appUrl =
+
       "tmap://route" +
+
       `?goalname=${encodeURIComponent(destinationName)}` +
+
       `&goalx=${lng}` +
+
       `&goaly=${lat}`;
 
-    const fallbackUrl =
-      "https://www.tmap.co.kr/search/search.do" +
-      `?searchKeyword=${encodeURIComponent(destinationName)}`;
+    let appOpened = false;
 
-    let pageHidden = false;
+    const markOpened = () => {
 
-    const handleVisibility = () => {
       if (document.hidden) {
-        pageHidden = true;
+
+        appOpened = true;
+
       }
+
     };
 
     document.addEventListener(
+
       "visibilitychange",
-      handleVisibility,
+
+      markOpened,
+
       { once: true }
+
     );
+
+    /*
+
+     * TMAP 앱 실행 시도
+
+     */
 
     window.location.href = appUrl;
 
+    /*
+
+     * 앱이 열리지 않았을 때 앱 설치 페이지로 이동
+
+     */
+
     window.setTimeout(() => {
-      if (!pageHidden) {
-        window.location.href = fallbackUrl;
+
+      if (appOpened) {
+
+        return;
+
       }
-    }, 1600);
+
+      if (isAndroid) {
+
+        window.location.href =
+
+          "https://play.google.com/store/apps/details?id=com.skt.tmap.ku";
+
+        return;
+
+      }
+
+      window.location.href =
+
+        "https://apps.apple.com/kr/app/tmap/id431589174";
+
+    }, 1800);
+
   });
+
 }
 
 init();
