@@ -521,10 +521,17 @@ function renderNaverMap() {
   const mapLink = $("#naverMapLink");
   const directionLink = $("#naverDirectionLink");
 
-  const searchName = CONFIG.wedding.searchName.trim();
+  const searchName = "까사그랑데 센트로";
   const encodedSearchName = encodeURIComponent(searchName);
 
-  const { lat, lng } = CONFIG.wedding;
+  // 실제 마커 위치
+  const markerLat = 37.54081;
+  const markerLng = 127.07115;
+
+  // 지도 화면 중심 보정값
+  // 마커는 그대로 두고 화면만 약간 위쪽으로 이동
+  const centerLat = markerLat + 0.00012;
+  const centerLng = markerLng;
 
   if (mapLink) {
     mapLink.href =
@@ -532,58 +539,49 @@ function renderNaverMap() {
   }
 
   if (directionLink) {
-
     directionLink.href =
-  
       "https://map.naver.com/p/directions/-/3zlvyM,2AKTV8,%EA%B9%8C%EC%82%AC%EA%B7%B8%EB%9E%91%EB%8D%B0%20%EC%84%BC%ED%8A%B8%EB%A1%9C,1396499968,PLACE_POI/-/transit?c=15.00,0,0,0,dh";
-  
   }
 
-  if (
-    !NAVER_MAP_CLIENT_ID ||
-    !mapElement ||
-    !Number.isFinite(lat) ||
-    !Number.isFinite(lng)
-  ) {
+  if (!NAVER_MAP_CLIENT_ID || !mapElement) {
     return;
   }
 
   const createMap = () => {
-    /*
-     * 실제 목적지 마커 좌표
-     */
+    if (!window.naver?.maps) {
+      return;
+    }
+
     const markerPosition =
-      new window.naver.maps.LatLng(lat, lng);
-  
-    /*
-     * 지도 화면 중심만 약간 북쪽으로 이동
-     * 양수: 북쪽, 음수: 남쪽
-     * 경도도 조정하려면 lng에 값을 더하거나 빼면 됨
-     */
+      new window.naver.maps.LatLng(
+        markerLat,
+        markerLng
+      );
+
     const centerPosition =
       new window.naver.maps.LatLng(
-        lat + 0.00018,
-        lng
+        centerLat,
+        centerLng
       );
-  
+
     const map =
       new window.naver.maps.Map("naverMap", {
         center: centerPosition,
-        zoom: 17,
+        zoom: 18,
         zoomControl: true,
         zoomControlOptions: {
           position:
             window.naver.maps.Position.TOP_RIGHT
         }
       });
-  
+
     const marker =
       new window.naver.maps.Marker({
         position: markerPosition,
         map,
         title: searchName
       });
-  
+
     window.naver.maps.Event.addListener(
       marker,
       "click",
@@ -606,7 +604,9 @@ function renderNaverMap() {
 
   script.src =
     "https://oapi.map.naver.com/openapi/v3/maps.js" +
-    `?ncpKeyId=${encodeURIComponent(NAVER_MAP_CLIENT_ID)}`;
+    `?ncpKeyId=${encodeURIComponent(
+      NAVER_MAP_CLIENT_ID
+    )}`;
 
   script.async = true;
   script.defer = true;
