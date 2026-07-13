@@ -243,19 +243,7 @@ h3 {
   gap: 12px;
 }
 
-.intro-handwriting-line {
-  min-height: 1.75em;
-  font-family:
-    "Nanum Pen Script",
-    "Nanum Brush Script",
-    "Apple Chancery",
-    "Bradley Hand",
-    cursive;
-  font-size: clamp(24px, 6.4vw, 38px);
-  line-height: 1.35;
-  letter-spacing: 0.02em;
-  word-break: keep-all;
-}
+
 
 .intro-handwriting-line::after {
   content: "";
