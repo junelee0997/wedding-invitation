@@ -538,12 +538,26 @@ function renderNaverMap() {
   }
 
   const createMap = () => {
-    const position =
+    /*
+     * 실제 목적지 마커 좌표
+     */
+    const markerPosition =
       new window.naver.maps.LatLng(lat, lng);
-
+  
+    /*
+     * 지도 화면 중심만 약간 북쪽으로 이동
+     * 양수: 북쪽, 음수: 남쪽
+     * 경도도 조정하려면 lng에 값을 더하거나 빼면 됨
+     */
+    const centerPosition =
+      new window.naver.maps.LatLng(
+        lat + 0.00018,
+        lng
+      );
+  
     const map =
       new window.naver.maps.Map("naverMap", {
-        center: position,
+        center: centerPosition,
         zoom: 17,
         zoomControl: true,
         zoomControlOptions: {
@@ -551,14 +565,14 @@ function renderNaverMap() {
             window.naver.maps.Position.TOP_RIGHT
         }
       });
-
+  
     const marker =
       new window.naver.maps.Marker({
-        position,
+        position: markerPosition,
         map,
         title: searchName
       });
-
+  
     window.naver.maps.Event.addListener(
       marker,
       "click",
